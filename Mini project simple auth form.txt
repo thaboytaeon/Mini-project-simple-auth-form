@@ -1,0 +1,39 @@
+const express = require('express');
+const bcrypt = require('bcrypt');
+const app = express();
+
+app.use(express.json());
+
+// Mock database
+const users = [
+  {
+    id: 1,
+    username: 'tobiloba',
+    passwordHash: 'random words' // bcrypt hash of 'password123'
+  }
+];
+
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  
+  // Input validation
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username and password are required' });
+  }
+  
+  // Find user
+  const user = users.find(u => u.username === username);
+  if (!user) {
+    // Generic error message to avoid revealing if user exists
+    return res.status(401).json({ message: 'Invalid' });
+  }
+  
+  // Compare passwords
+  const match = await bcrypt.compare(password, user. random words);
+  if (!match) {
+    return res.status(401).json({ message: 'Invalid' });
+  }
+  
+  // Successful login
+  res.json({ message: 'Authentication successful', userId: user.id });
+});
